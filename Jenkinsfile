@@ -3,15 +3,15 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
-        S3_BUCKET          = 'restarent9989'   // replace with actual bucket
-        CLOUDFRONT_ID      = 'E1C48U643I1R9M'        // replace with your distribution ID
+        S3_BUCKET          = 'devopsfrontend2369'   // replace with actual bucket
+        CLOUDFRONT_ID      = 'EXC93M3JCO2BU'        // replace with your distribution ID
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/syam-ch/syamo326.git'
+                    url: 'https://github.com/sami-dev/aws-s3-static-website-sample'
             }
         }
 
@@ -29,7 +29,7 @@ pipeline {
 
         stage('Deploy to S3') {
             steps {
-                withAWS(credentials: 'aws-credentials-id', region: "${AWS_DEFAULT_REGION}") {
+                withAWS(credentials: 'c421e99a-cac2-4311-afb2-b32c8d11546d', region: "${AWS_DEFAULT_REGION}") {
                     sh '''
                         aws s3 sync build/ s3://$S3_BUCKET --delete
                     '''
@@ -39,7 +39,7 @@ pipeline {
 
         stage('Invalidate CloudFront Cache') {
             steps {
-                withAWS(credentials: 'aws-credentials-id', region: "${AWS_DEFAULT_REGION}") {
+                withAWS(credentials: 'c421e99a-cac2-4311-afb2-b32c8d11546d', region: "${AWS_DEFAULT_REGION}") {
                     sh '''
                         aws cloudfront create-invalidation \
                         --distribution-id $CLOUDFRONT_ID \
@@ -50,3 +50,4 @@ pipeline {
         }
     }
 }
+
