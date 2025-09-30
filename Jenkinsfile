@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     environment {
-        AWS_DEFAULT_REGION = 'us-east-1'
-        S3_BUCKET          = 'devopsfrontend2369'   // replace with actual bucket
-        CLOUDFRONT_ID      = 'E1HV4188SK738H'        // replace with your distribution ID
+        AWS_ACCESS_KEY_ID     = 'AKIAQEFWATJ2RQPCXY7J'      // 🔑 Replace with your Access Key
+        AWS_SECRET_ACCESS_KEY = 'IdOSu9QGvBGejY/V1fleTVkc/ZQlh2H+T52hvCn3'      // 🔑 Replace with your Secret Key
+        AWS_DEFAULT_REGION    = 'us-east-1'
+        S3_BUCKET             = 'devopsfrontend2369'       // ✅ Replace with actual bucket
+        CLOUDFRONT_ID         = 'E1HV4188SK738H'           // ✅ Replace with your CloudFront distribution ID
     }
 
     stages {
@@ -17,7 +19,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh 'npm ci'  // Faster & safer than npm install
             }
         }
 
@@ -29,27 +31,35 @@ pipeline {
 
         stage('Deploy to S3') {
             steps {
-                withAWS(credentials: 'c421e99a-cac2-4311-afb2-b32c8d11546d', region: "${AWS_DEFAULT_REGION}") {
-                    sh '''
-                        aws s3 sync build/ s3://$S3_BUCKET --delete
-                    '''
-                }
+                sh '''
+                    echo "Syncing build directory to S3..."
+                    aws s3 sync build/ s3://$S3_BUCKET --delete --exact-timestamps
+                '''
             }
         }
 
         stage('Invalidate CloudFront Cache') {
             steps {
-                withAWS(credentials: 'c421e99a-cac2-4311-afb2-b32c8d11546d', region: "${AWS_DEFAULT_REGION}") {
-                    sh '''
-                        aws cloudfront create-invalidation \
+                sh '''
+                    echo "Invalidating CloudFront cache..."
+                    aws cloudfront create-invalidation \
                         --distribution-id $CLOUDFRONT_ID \
                         --paths "/*"
-                    '''
-                }
+                '''
             }
         }
     }
+
+    post {
+        success {
+            echo "✅ Deployment successful!"
+        }
+        failure {
+            echo "❌ Deployment failed. Check logs."
+        }
+    }
 }
+
 
 
 
