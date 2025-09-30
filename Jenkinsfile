@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_DEFAULT_REGION = 'us-east-1'
         S3_BUCKET          = 'devopsfrontend2369'   // replace with actual bucket
-        CLOUDFRONT_ID      = 'EXC93M3JCO2BU'        // replace with your distribution ID
+        CLOUDFRONT_ID      = 'E1HV4188SK738H'        // replace with your distribution ID
     }
 
     stages {
@@ -50,4 +50,5 @@ pipeline {
         }
     }
 }
+
 
