@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/sami-dev/aws-s3-static-website-sample'
+                    url: 'https://github.com/siva941/aws-s3-static-website-sample.git'
             }
         }
 
@@ -50,5 +50,6 @@ pipeline {
         }
     }
 }
+
 
 
